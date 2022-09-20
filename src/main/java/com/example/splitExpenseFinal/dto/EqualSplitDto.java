@@ -1,5 +1,6 @@
 package com.example.splitExpenseFinal.dto;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 

@@ -103,7 +103,7 @@ public class GroupController {
                 "request body incorrect");
     }
 
-    @PostMapping("/edit/equal-expense/{id}")
+    @PutMapping("/edit/equal-expense/{id}")
     public ResponseTemplate editEqualExpense(@PathVariable("id") String id,@RequestBody EqualSplitDto equalSplitDto) {
         if (expenseService.checkEqualSplitDto(equalSplitDto)) {
             if (expenseService.findById(id).isPresent()) {
@@ -155,7 +155,7 @@ public class GroupController {
                 "request body incorrect");
     }
 
-    @PostMapping("/edit/exact-expense/{id}")
+    @PutMapping("/edit/exact-expense/{id}")
     public ResponseTemplate editExactExpense(@PathVariable("id") String id,@RequestBody Expense expense) {
         if (expenseService.checkExpenseObject(expense)) {
             if (expenseService.findById(id).isPresent()) {
@@ -184,7 +184,7 @@ public class GroupController {
                 "request body incorrect");
     }
 
-    @PostMapping("/remove/user/{groupId}/{userId}")
+    @DeleteMapping("/remove/user/{groupId}/{userId}")
     public ResponseTemplate removeUserToGroup(@PathVariable("groupId") String groupId, @PathVariable("userId") String userId){
         if(groupService.findByGroupId(groupId).isPresent() && userService.findById(userId).isPresent()){
             Group group = groupService.findByGroupId(groupId).get();
@@ -230,37 +230,7 @@ public class GroupController {
                         "Check User id or Group id" );
     }
 
-    @PostMapping("/remove/exact-expense/{id}")
-    public ResponseTemplate removeExactExpense(@PathVariable("id") String id) {
-            if (expenseService.findById(id).isPresent()) {
-                    expenseService.editOrRemoveExactExpense(id,null); //:TODO
-                    return new ResponseTemplate(
-                            HttpStatus.OK.getReasonPhrase(),
-                            HttpStatus.OK.value(),
-                            "OK");
-                }
-            return new ResponseTemplate(
-                    HttpStatus.NOT_FOUND.getReasonPhrase(),
-                    HttpStatus.NOT_FOUND.value(),
-                    "Invalid Expense Id");
-        }
-
-    @PostMapping("/remove/equal-expense/{id}")
-    public ResponseTemplate removeEqualExpense(@PathVariable("id") String id) {
-            if (expenseService.findById(id).isPresent()) {
-                    expenseService.editOrRemoveExactExpense(id, null); //:TODO
-                    return new ResponseTemplate(
-                            HttpStatus.OK.getReasonPhrase(),
-                            HttpStatus.OK.value(),
-                            "OK");
-                }
-            return new ResponseTemplate(
-                    HttpStatus.NOT_FOUND.getReasonPhrase(),
-                    HttpStatus.NOT_FOUND.value(),
-                    "Invalid Expense Id");
-        }
-
-    @PostMapping("/remove/expense/{id}")
+    @DeleteMapping("/remove/expense/{id}")
     public ResponseTemplate removeExpense(@PathVariable("id") String id){
         if(expenseService.findById(id).isPresent()){
             expenseService.editOrRemoveExactExpense(id,null);

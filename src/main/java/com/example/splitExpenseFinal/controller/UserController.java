@@ -20,7 +20,7 @@ public class UserController {
     @PostMapping("/create")
     public ResponseTemplate createUser(@RequestBody User user){
           if(!user.getName().isEmpty()) {
-              User user1 = null ;//userService.createUser(user);
+              User user1 =  userService.createUser(user);
               user1.setId("#*********************#");
               if (user1 != null) {
                   return new ResponseTemplate(
@@ -39,7 +39,7 @@ public class UserController {
     public Optional<User> findUser(@PathVariable("id") String id){
         return userService.findById(id);
     }
-    @GetMapping("/show-balance/{id}")
+    @PostMapping("/show-balance/{id}")
     public ResponseTemplate showUserBalance(@PathVariable("id") String id){
         if(userService.findById(id).isPresent()) {
             double amount = userService.showUserBalance(id);
