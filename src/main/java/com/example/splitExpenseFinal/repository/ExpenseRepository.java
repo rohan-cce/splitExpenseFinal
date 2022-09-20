@@ -8,9 +8,11 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ExpenseRepository extends MongoRepository<Expense,String> {
+public interface ExpenseRepository extends MongoRepository<Expense, String> {
     Expense save(Expense expense);
+
     Optional<Expense> findById(String id);
+
     void deleteById(String id);
 
 }

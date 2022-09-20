@@ -13,7 +13,7 @@ public class Expense {
     private String description;
     private String splitType;
     private Double amount;
-    private Map<String,Double> usersplitAmountMap = new HashMap<>();
+    private Map<String, Double> usersplitAmountMap = new HashMap<>();
     private String groupId;
     private String payeeId;
 

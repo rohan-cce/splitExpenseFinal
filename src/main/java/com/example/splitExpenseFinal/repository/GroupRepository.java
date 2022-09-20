@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface GroupRepository extends MongoRepository<Group,String> {
+public interface GroupRepository extends MongoRepository<Group, String> {
 
     Group save(Group group);
 

@@ -18,17 +18,17 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/create")
-    public ResponseTemplate createUser(@RequestBody User user){
-          if(!user.getName().isEmpty()) {
-              User user1 =  userService.createUser(user);
-              user1.setId("#*********************#");
-              if (user1 != null) {
-                  return new ResponseTemplate(
-                          HttpStatus.CREATED.getReasonPhrase(),
-                          HttpStatus.CREATED.value(),
-                          user1);
-              }
-          }
+    public ResponseTemplate createUser(@RequestBody User user) {
+        if (!user.getName().isEmpty()) {
+            User user1 = userService.createUser(user);
+            user1.setId("#*********************#");
+            if (user1 != null) {
+                return new ResponseTemplate(
+                        HttpStatus.CREATED.getReasonPhrase(),
+                        HttpStatus.CREATED.value(),
+                        user1);
+            }
+        }
         return new ResponseTemplate(
                 HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
                 HttpStatus.NOT_ACCEPTABLE.value(),
@@ -36,12 +36,13 @@ public class UserController {
     }
 
     @GetMapping("/find/{id}")
-    public Optional<User> findUser(@PathVariable("id") String id){
+    public Optional<User> findUser(@PathVariable("id") String id) {
         return userService.findById(id);
     }
+
     @PostMapping("/show-balance/{id}")
-    public ResponseTemplate showUserBalance(@PathVariable("id") String id){
-        if(userService.findById(id).isPresent()) {
+    public ResponseTemplate showUserBalance(@PathVariable("id") String id) {
+        if (userService.findById(id).isPresent()) {
             double amount = userService.showUserBalance(id);
             if (amount > 0) {
                 return new ResponseTemplate(

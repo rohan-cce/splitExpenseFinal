@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ExpenseService {
 
-    void createEqualExpense(EqualSplitDto equalSplitDto,@Nullable String id);
+    void createEqualExpense(EqualSplitDto equalSplitDto, @Nullable String id);
 
     boolean checkAmount(ArrayList arrayList, Double amount);
 
@@ -22,10 +22,12 @@ public interface ExpenseService {
     Optional<Expense> findById(String id);
 
     void editOrRemoveEqualExpense(String id, @Nullable EqualSplitDto equalSplitDto);
-    void editOrRemoveExactExpense(String id,@Nullable Expense editExpense);
 
-     boolean checkEqualSplitDto(EqualSplitDto equalSplitDto);
-     boolean checkExpenseObject(Expense expense);
+    void editOrRemoveExactExpense(String id, @Nullable Expense editExpense);
 
-     void removeExpense(String id);
+    boolean checkEqualSplitDto(EqualSplitDto equalSplitDto);
+
+    boolean checkExpenseObject(Expense expense);
+
+    void removeExpense(String id);
 }

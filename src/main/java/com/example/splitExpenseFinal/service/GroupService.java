@@ -16,7 +16,7 @@ public interface GroupService {
 
     Optional<Group> findByGroupId(String id);
 
-    boolean checkUserList(List<String> users,String groupId);
+    boolean checkUserList(List<String> users, String groupId);
 
     boolean checkWhetherUserExists(String id);
 

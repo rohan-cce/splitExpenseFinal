@@ -13,7 +13,7 @@ public class Group {
     @Id
     private String id;
     private String name;
-    private Map<String,Double> currentBalance = new HashMap<>();
+    private Map<String, Double> currentBalance = new HashMap<>();
 
     public String getId() {
         return id;

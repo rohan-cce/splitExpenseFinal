@@ -22,8 +22,6 @@ public class GroupServiceImpl implements GroupService {
     GroupRepository groupRepository;
 
 
-
-
     @Autowired
     UserRepository userRepository;
 
@@ -43,8 +41,8 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public boolean checkWhetherUserExists(String id){
-        if(userRepository.findById(id).isPresent()){
+    public boolean checkWhetherUserExists(String id) {
+        if (userRepository.findById(id).isPresent()) {
             return true;
         }
         return false;
@@ -56,10 +54,10 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public boolean checkUserList(List<String> users,String groupId){
-        Map<String,Double> userMap = groupRepository.findById(groupId).get().getCurrentBalance();
-        for(String s:users){
-            if(!checkWhetherUserExists(s) || !userMap.containsKey(s)){
+    public boolean checkUserList(List<String> users, String groupId) {
+        Map<String, Double> userMap = groupRepository.findById(groupId).get().getCurrentBalance();
+        for (String s : users) {
+            if (!checkWhetherUserExists(s) || !userMap.containsKey(s)) {
                 return false;
             }
         }
