@@ -79,7 +79,6 @@ public class UserControllerTest {
                 .content(dummyUserString);
 
         mockMvc.perform(mockRequest)
-//                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status",is("Created")))
                 .andExpect(jsonPath("$.code",is(201)))
                 .andExpect(jsonPath("$.value.name",is("sample")));

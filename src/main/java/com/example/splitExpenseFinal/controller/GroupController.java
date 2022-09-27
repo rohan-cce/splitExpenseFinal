@@ -47,10 +47,6 @@ public class GroupController {
                 "group not created");
     }
 
-//    @GetMapping("/find/{name}")
-//    public Group findGroup(@PathVariable("name") String name) {
-//        return groupService.findByGroup(name);
-//    }
 
     @PostMapping("/add/user/{groupId}/{userId}")
     public ResponseTemplate addUserToGroup(@PathVariable("groupId") String groupId, @PathVariable("userId") String userId) {
@@ -186,8 +182,8 @@ public class GroupController {
             Group group = groupService.findByGroupId(groupId).get();
             group.setId(group.getId());
             Map<String, Double> userMap = group.getCurrentBalance();
-            double pendingAmount = userMap.get(userId);
             if (userMap.containsKey(userId)) {
+                double pendingAmount = userMap.get(userId);
                 if (pendingAmount == 0.0) {
                     group.setId(group.getId());
                     userMap.remove(userId);
