@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.Map;
 
 
@@ -48,10 +47,10 @@ public class GroupController {
                 "group not created");
     }
 
-    @GetMapping("/find/{name}")
-    public Group findGroup(@PathVariable("name") String name) {
-        return groupService.findByGroup(name);
-    }
+//    @GetMapping("/find/{name}")
+//    public Group findGroup(@PathVariable("name") String name) {
+//        return groupService.findByGroup(name);
+//    }
 
     @PostMapping("/add/user/{groupId}/{userId}")
     public ResponseTemplate addUserToGroup(@PathVariable("groupId") String groupId, @PathVariable("userId") String userId) {
@@ -108,9 +107,7 @@ public class GroupController {
             if (expenseService.findById(id).isPresent()) {
                 String validationResult = expenseService.equalExpenseValidation(equalSplitDto);
                 if (validationResult.equalsIgnoreCase("Success")) {
-
                     expenseService.editOrRemoveEqualExpense(id, equalSplitDto); //:TODO
-                    //expenseService.editEqualExpense(id,equalSplitDto);
                     return new ResponseTemplate(
                             HttpStatus.OK.getReasonPhrase(),
                             HttpStatus.OK.value(),
@@ -241,7 +238,6 @@ public class GroupController {
                 HttpStatus.NOT_FOUND.getReasonPhrase(),
                 HttpStatus.NOT_FOUND.value(),
                 "Invalid Expense Id");
-
     }
 }
 

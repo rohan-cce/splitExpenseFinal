@@ -1,10 +1,16 @@
 package com.example.splitExpenseFinal.document;
 
 
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.lang.NonNull;
 
 @Document
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     private String id;
@@ -53,4 +59,15 @@ public class User {
                 ", spent=" + spent +
                 '}';
     }
+
+    public User(String name) {
+        this.name = name;
+    }
+
+    public User(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+
 }

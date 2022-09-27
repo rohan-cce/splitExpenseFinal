@@ -34,6 +34,15 @@ public class ResponseTemplate<T> {
     public void setValue(T value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return "ResponseTemplate{" +
+                "status='" + status + '\'' +
+                ", code=" + code +
+                ", value=" + value +
+                '}';
+    }
 }
 
 

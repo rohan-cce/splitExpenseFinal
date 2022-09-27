@@ -228,7 +228,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         }
 
 
-        expenseRepository.save(expense);
+        expenseRepository.save(expense) ;
         groupService.save(group);
 
     }

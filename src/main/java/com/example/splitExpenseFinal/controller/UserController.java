@@ -21,7 +21,6 @@ public class UserController {
     public ResponseTemplate createUser(@RequestBody User user) {
         if (!user.getName().isEmpty()) {
             User user1 = userService.createUser(user);
-            user1.setId("#*********************#");
             if (user1 != null) {
                 return new ResponseTemplate(
                         HttpStatus.CREATED.getReasonPhrase(),
@@ -35,10 +34,12 @@ public class UserController {
                 "user not created");
     }
 
-    @GetMapping("/find/{id}")
-    public Optional<User> findUser(@PathVariable("id") String id) {
-        return userService.findById(id);
-    }
+
+//
+//    @GetMapping("/find/{id}")
+//    public Optional<User> findUser(@PathVariable("id") String id) {
+//        return userService.findById(id);
+//    }
 
     @PostMapping("/show-balance/{id}")
     public ResponseTemplate showUserBalance(@PathVariable("id") String id) {

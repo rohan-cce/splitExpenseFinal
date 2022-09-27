@@ -51,6 +51,8 @@ public class UserControllerTest {
     User USER_2 = new User("2","user2");
     User EMPTY_USER = new User("3","");
 
+    private final String CREATE_USER_URL = "/user/create";
+    private final String SHOW_USER_BALANCE_URL = "/user/show-balance/{id}";
 
 
     @Before
@@ -65,13 +67,13 @@ public class UserControllerTest {
     public void createUserSuccessTest() throws Exception{
 
         User sampleUser = User.builder()
-                .name("dummy")
+                .name("sample")
                 .build();
 
         Mockito.when(userService.createUser(sampleUser)).thenReturn(sampleUser);
         String dummyUserString = objectWriter.writeValueAsString(sampleUser);
 
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/user/create")
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post(CREATE_USER_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(dummyUserString);
@@ -96,7 +98,7 @@ public class UserControllerTest {
 
         String emptyUserString = objectWriter.writeValueAsString(emptyUser);
 
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/user/create")
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post(CREATE_USER_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(emptyUserString);
@@ -117,7 +119,7 @@ public class UserControllerTest {
                 .build();
 
         Mockito.when(userService.findById("3")).thenReturn(Optional.ofNullable(null));
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/user/show-balance/{id}",3)
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post(SHOW_USER_BALANCE_URL,3)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
 
@@ -140,7 +142,7 @@ public class UserControllerTest {
         Mockito.when(userService.findById(dummyUser.getId())).thenReturn(Optional.ofNullable(dummyUser));
         Mockito.when(userService.showUserBalance(dummyUser.getId())).thenReturn(dummyUser.getBalance());
 
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/user/show-balance/{id}",1)
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post(SHOW_USER_BALANCE_URL,1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
 
@@ -162,7 +164,7 @@ public class UserControllerTest {
         Mockito.when(userService.findById(dummyUser.getId())).thenReturn(Optional.ofNullable(dummyUser));
         Mockito.when(userService.showUserBalance(dummyUser.getId())).thenReturn(dummyUser.getBalance());
 
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/user/show-balance/{id}",1)
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post(SHOW_USER_BALANCE_URL,1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
 
