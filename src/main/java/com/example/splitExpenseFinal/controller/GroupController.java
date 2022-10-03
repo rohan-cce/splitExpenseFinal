@@ -153,7 +153,6 @@ public class GroupController {
             if (expenseService.findById(id).isPresent()) {
                 String validationResult = expenseService.exactExpenseValidation(expense);
                 if (validationResult.equalsIgnoreCase("Success")) {
-
                     expenseService.editOrRemoveExactExpense(id, expense); //:TODO
                     return new ResponseTemplate(
                             HttpStatus.OK.getReasonPhrase(),

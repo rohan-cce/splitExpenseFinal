@@ -11,6 +11,7 @@ import com.example.splitExpenseFinal.service.UserService;
 import com.example.splitExpenseFinal.service.impl.ExpenseServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.sun.tools.corba.se.idl.constExpr.Equal;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -61,7 +62,8 @@ public class GroupControllerTest {
     private final String CREATE_EXACT_EXPENSE_URL = "/group/create/exact-expense";
     private final String REMOVE_USER_FROM_GROUP_URL = "/group/remove/user/{groupId}/{userId}";
     private final String EDIT_EXACT_EXPENSE_URL = "/group/edit/exact-expense/{id}";
-
+    private final String EDIT_EQUAL_EXPENSE_URL = "/group/edit/equal-expense/{id}";
+    private final String REMOVE_EXPENSE_URL = "/group/remove/expense/{id}";
 
     @Before
     public void setUp(){
@@ -816,6 +818,52 @@ public class GroupControllerTest {
     }
 
     @Test
+    public void editExactExpenseValidationFailureTest() throws Exception{
+
+        Map<String,Double> userMap = new HashMap<String,Double>(){{
+            put("1",10.00);
+            put("2",12.00);
+            put("3",8.00);
+        }
+        };
+
+        Expense expense = Expense.builder()
+                .id("1")
+                .description("exact split")
+                .splitType("EXACT")
+                .amount(10.0)
+                .usersplitAmountMap(userMap)
+                .groupId("1")
+                .payeeId("2")
+                .build();
+
+        Mockito.when(expenseService.checkExpenseObject(expense)).thenReturn(true);
+        Mockito.when(expenseService.exactExpenseValidation(expense)).thenReturn("total amount not matching with split");
+        Mockito.when(expenseService.findById(expense.getId())).thenReturn(Optional.of(expense));
+
+        ExpenseService expenseService = mock(ExpenseService.class);
+        doNothing().when(expenseService).createExactExpense(expense,"1");
+
+        expenseService.createExactExpense(expense,"1");
+        verify(expenseService,times(1)).createExactExpense(expense,"1");
+
+        String expenseString = objectWriter.writeValueAsString(expense);
+
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(EDIT_EXACT_EXPENSE_URL,"1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(expenseString);
+
+
+        mockMvc.perform(mockRequest)
+                .andExpect(jsonPath("$.status",is("Not Acceptable")))
+                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.value",is("total amount not matching with split")));
+
+    }
+
+    @Test
     public void editExactExpenseInvalidExpenseIdTest() throws Exception{
 
         Map<String,Double> userMap = new HashMap<String,Double>(){{
@@ -853,6 +901,288 @@ public class GroupControllerTest {
                 .andExpect(jsonPath("$.status",is("Not Found")))
                 .andExpect(jsonPath("$.code",is(404)))
                 .andExpect(jsonPath("$.value",is("Invalid Expense Id")));
+
+    }
+
+    @Test
+    public void editExactExpenseIncorrectRequestBodyTest() throws Exception{
+
+        Map<String,Double> userMap = new HashMap<String,Double>(){{
+            put("1",10.00);
+            put("2",12.00);
+            put("3",8.00);
+        }
+        };
+
+        Expense expense = Expense.builder()
+                .id("1")
+                .description("exact split")
+                .splitType("EXACT")
+                .amount(10.0)
+                .usersplitAmountMap(userMap)
+                .groupId("1")
+                .payeeId("2")
+                .build();
+
+        Mockito.when(expenseService.checkExpenseObject(expense)).thenReturn(false);
+
+
+
+        String expenseString = objectWriter.writeValueAsString(expense);
+
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(EDIT_EXACT_EXPENSE_URL,"1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(expenseString);
+
+
+        mockMvc.perform(mockRequest)
+                .andExpect(jsonPath("$.status",is("Bad Request")))
+                .andExpect(jsonPath("$.code",is(400)))
+                .andExpect(jsonPath("$.value",is("request body incorrect")));
+
+    }
+
+
+    @Test
+    public void editEqualExpenseSuccessTest() throws Exception{
+
+        List<String> userList = Arrays.asList("1","2");
+
+        String id = "1";
+
+        Map<String,Double> userMap = new HashMap<String,Double>(){{
+            put("1",8.00);
+            put("2",2.00);
+        }
+        };
+
+        Expense expense = Expense.builder()
+                .id("1")
+                .description("equal split")
+                .splitType("EQUAL")
+                .amount(10.0)
+                .usersplitAmountMap(userMap)
+                .groupId("1")
+                .payeeId("2")
+                .build();
+
+        EqualSplitDto equalSplitDto = EqualSplitDto.builder()
+                .description("equal split")
+                .splitType("EQUAL")
+                .amount(10.0)
+                .listOfUsers(userList)
+                .groupId("1")
+                .payeeId("2")
+                .build();
+
+        Mockito.when(expenseService.checkEqualSplitDto(equalSplitDto)).thenReturn(true);
+        Mockito.when(expenseService.equalExpenseValidation(equalSplitDto)).thenReturn("Success");
+        Mockito.when(expenseService.findById(id)).thenReturn(Optional.of(expense));
+
+        ExpenseService expenseService = mock(ExpenseService.class);
+        doNothing().when(expenseService).editOrRemoveEqualExpense("1",equalSplitDto);
+
+        expenseService.editOrRemoveEqualExpense("1",equalSplitDto);
+        verify(expenseService,times(1)).editOrRemoveEqualExpense("1",equalSplitDto);
+
+        String expenseString = objectWriter.writeValueAsString(equalSplitDto);
+
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(EDIT_EQUAL_EXPENSE_URL,"1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(expenseString);
+
+        mockMvc.perform(mockRequest)
+                .andExpect(jsonPath("$.status",is("OK")))
+                .andExpect(jsonPath("$.code",is(200)))
+                .andExpect(jsonPath("$.value",is("Success")));
+
+    }
+
+
+    @Test
+    public void editEqualExpenseValidationFailedTest() throws Exception{
+
+        List<String> userList = Arrays.asList("1","2");
+
+        String id = "1";
+
+        Map<String,Double> userMap = new HashMap<String,Double>(){{
+            put("1",8.00);
+            put("2",2.00);
+        }
+        };
+
+        Expense expense = Expense.builder()
+                .id("1")
+                .description("equal split")
+                .splitType("EQUAL")
+                .amount(10.0)
+                .usersplitAmountMap(userMap)
+                .groupId("1")
+                .payeeId("2")
+                .build();
+
+        EqualSplitDto equalSplitDto = EqualSplitDto.builder()
+                .description("equal split")
+                .splitType("EQUALs")
+                .amount(10.0)
+                .listOfUsers(userList)
+                .groupId("1")
+                .payeeId("2")
+                .build();
+
+        Mockito.when(expenseService.checkEqualSplitDto(equalSplitDto)).thenReturn(true);
+        Mockito.when(expenseService.equalExpenseValidation(equalSplitDto)).thenReturn("Please Enter EQUAL split method");
+        Mockito.when(expenseService.findById(id)).thenReturn(Optional.of(expense));
+
+
+        String expenseString = objectWriter.writeValueAsString(equalSplitDto);
+
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(EDIT_EQUAL_EXPENSE_URL,"1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(expenseString);
+
+        mockMvc.perform(mockRequest)
+                .andExpect(jsonPath("$.status",is("Not Acceptable")))
+                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.value",is("Please Enter EQUAL split method")));
+
+    }
+
+
+    @Test
+    public void editEqualExpenseIdDoesntExistTest() throws Exception{
+
+        List<String> userList = Arrays.asList("1","2");
+
+        String id = "1";
+
+
+        EqualSplitDto equalSplitDto = EqualSplitDto.builder()
+                .description("equal split")
+                .splitType("EQUAL")
+                .amount(10.0)
+                .listOfUsers(userList)
+                .groupId("1")
+                .payeeId("2")
+                .build();
+
+        Mockito.when(expenseService.checkEqualSplitDto(equalSplitDto)).thenReturn(true);
+        Mockito.when(expenseService.findById(id)).thenReturn(Optional.ofNullable(null));
+
+
+        String expenseString = objectWriter.writeValueAsString(equalSplitDto);
+
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(EDIT_EQUAL_EXPENSE_URL,"1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(expenseString);
+
+        mockMvc.perform(mockRequest)
+                .andExpect(jsonPath("$.status",is("Not Found")))
+                .andExpect(jsonPath("$.code",is(404)))
+                .andExpect(jsonPath("$.value",is("Invalid Expense Id")));
+
+    }
+
+    @Test
+    public void editEqualExpenseIncorrectRequestBody() throws Exception{
+
+        List<String> userList = Arrays.asList("1","2");
+
+        String id = "1";
+
+
+
+        EqualSplitDto equalSplitDto = EqualSplitDto.builder()
+                .description("equal split")
+                .splitType("EQUAL")
+                .amount(10.0)
+                .listOfUsers(userList)
+                .groupId("1")
+                .payeeId("2")
+                .build();
+
+        Mockito.when(expenseService.checkEqualSplitDto(equalSplitDto)).thenReturn(false);
+
+
+        String expenseString = objectWriter.writeValueAsString(equalSplitDto);
+
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(EDIT_EQUAL_EXPENSE_URL,"1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(expenseString);
+
+        mockMvc.perform(mockRequest)
+                .andExpect(jsonPath("$.status",is("Bad Request")))
+                .andExpect(jsonPath("$.code",is(400)))
+                .andExpect(jsonPath("$.value",is("request body incorrect")));
+
+    }
+
+    @Test
+    public void removeExpenseSuccessTest() throws Exception{
+
+
+        Mockito.when(expenseService.findById("1")).thenReturn(Optional.ofNullable(null));
+
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.delete(REMOVE_EXPENSE_URL,"1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(mockRequest)
+                .andExpect(jsonPath("$.status",is("Not Found")))
+                .andExpect(jsonPath("$.code",is(404)))
+                .andExpect(jsonPath("$.value",is("Invalid Expense Id")));
+
+
+    }
+
+    @Test
+    public void removeExpenseFailureTest() throws Exception{
+        Map<String,Double> userMap = new HashMap<String,Double>(){{
+            put("1",8.00);
+            put("2",2.00);
+        }
+        };
+
+        Expense expense = Expense.builder()
+                .id("1")
+                .description("equal split")
+                .splitType("EQUAL")
+                .amount(10.0)
+                .usersplitAmountMap(userMap)
+                .groupId("1")
+                .payeeId("2")
+                .build();
+
+        Mockito.when(expenseService.findById(expense.getId())).thenReturn(Optional.of(expense));
+
+        ExpenseService expenseService = mock(ExpenseService.class);
+        doNothing().when(expenseService).editOrRemoveExactExpense(expense.getId(),null);
+
+        expenseService.editOrRemoveExactExpense(expense.getId(),null);
+        verify(expenseService,times(1)).editOrRemoveExactExpense(expense.getId(),null);
+
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.delete(REMOVE_EXPENSE_URL,"1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(mockRequest)
+                .andExpect(jsonPath("$.status",is("OK")))
+                .andExpect(jsonPath("$.code",is(200)))
+                .andExpect(jsonPath("$.value",is("OK")));
+
 
     }
 
