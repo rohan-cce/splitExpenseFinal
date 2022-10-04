@@ -1,6 +1,7 @@
 package com.example.splitExpenseFinal.controller;
 
 import com.example.splitExpenseFinal.document.User;
+import com.example.splitExpenseFinal.enums.ResponseStatusCode;
 import com.example.splitExpenseFinal.repository.UserRepository;
 import com.example.splitExpenseFinal.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,8 +80,8 @@ public class UserControllerTest {
                 .content(dummyUserString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Created")))
-                .andExpect(jsonPath("$.code",is(201)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.USER_CREATED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.USER_CREATED.getHttpCode())))
                 .andExpect(jsonPath("$.value.name",is("sample")));
     }
 
@@ -105,8 +106,8 @@ public class UserControllerTest {
         mockMvc.perform(mockRequest)
                 .andExpect(status().isOk())
 //                .andExpect(jsonPath("$",notNullValue()))
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EMPTY_USER_NAME.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EMPTY_USER_NAME.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("user not created")));
     }
 
@@ -123,8 +124,8 @@ public class UserControllerTest {
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Found")))
-                .andExpect(jsonPath("$.code",is(404)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.USER_ID_DOESNT_EXIST.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.USER_ID_DOESNT_EXIST.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("User id doesnt exist")));
 
 
@@ -146,8 +147,8 @@ public class UserControllerTest {
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("OK")))
-                .andExpect(jsonPath("$.code",is(200)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.USER_NEEDS_TO_GET_AMOUNT.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.USER_NEEDS_TO_GET_AMOUNT.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("user need to get : rs 20.0")));
 
     }
@@ -168,8 +169,8 @@ public class UserControllerTest {
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("OK")))
-                .andExpect(jsonPath("$.code",is(200)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.USER_OWES_AMOUNT.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.USER_OWES_AMOUNT.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("user owes : rs -20.0")));
 
     }

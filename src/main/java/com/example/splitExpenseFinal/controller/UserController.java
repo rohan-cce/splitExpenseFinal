@@ -2,13 +2,12 @@ package com.example.splitExpenseFinal.controller;
 
 
 import com.example.splitExpenseFinal.document.User;
-import com.example.splitExpenseFinal.returnTemplate.ResponseTemplate;
+import com.example.splitExpenseFinal.enums.ResponseStatusCode;
+import com.example.splitExpenseFinal.responseTemplate.ResponseTemplate;
 import com.example.splitExpenseFinal.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -23,14 +22,14 @@ public class UserController {
             User user1 = userService.createUser(user);
             if (user1 != null) {
                 return new ResponseTemplate(
-                        HttpStatus.CREATED.getReasonPhrase(),
-                        HttpStatus.CREATED.value(),
+                        ResponseStatusCode.USER_CREATED.getMessage(),
+                        ResponseStatusCode.USER_CREATED.getHttpCode(),
                         user1);
             }
         }
         return new ResponseTemplate(
-                HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
-                HttpStatus.NOT_ACCEPTABLE.value(),
+                ResponseStatusCode.EMPTY_USER_NAME.getMessage(),
+                ResponseStatusCode.EMPTY_USER_NAME.getHttpCode(),
                 "user not created");
     }
 
@@ -47,18 +46,18 @@ public class UserController {
             double amount = userService.showUserBalance(id);
             if (amount > 0) {
                 return new ResponseTemplate(
-                        HttpStatus.OK.getReasonPhrase(),
-                        HttpStatus.OK.value(),
+                        ResponseStatusCode.USER_NEEDS_TO_GET_AMOUNT.getMessage(),
+                        ResponseStatusCode.USER_NEEDS_TO_GET_AMOUNT.getHttpCode(),
                         new String("user need to get : rs " + amount));
             }
             return new ResponseTemplate(
-                    HttpStatus.OK.getReasonPhrase(),
-                    HttpStatus.OK.value(),
+                    ResponseStatusCode.USER_OWES_AMOUNT.getMessage(),
+                    ResponseStatusCode.USER_OWES_AMOUNT.getHttpCode(),
                     new String("user owes : rs " + amount));
         }
         return new ResponseTemplate(
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
-                HttpStatus.NOT_FOUND.value(),
+                ResponseStatusCode.USER_ID_DOESNT_EXIST.getMessage(),
+                ResponseStatusCode.USER_ID_DOESNT_EXIST.getHttpCode(),
                 "User id doesnt exist");
     }
 

@@ -12,7 +12,7 @@ import javax.validation.constraints.NotEmpty;
 import java.util.HashMap;
 import java.util.Map;
 
-@Document
+@Document(collection = "group")
 @Data
 @Builder
 @NoArgsConstructor
@@ -25,38 +25,5 @@ public class Group {
 
     public Group(String name) {
         this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Map<String, Double> getCurrentBalance() {
-        return currentBalance;
-    }
-
-    public void setCurrentBalance(Map<String, Double> currentBalance) {
-        this.currentBalance = currentBalance;
-    }
-
-    @Override
-    public String toString() {
-        return "Group{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", currentBalance=" + currentBalance +
-                '}';
     }
 }

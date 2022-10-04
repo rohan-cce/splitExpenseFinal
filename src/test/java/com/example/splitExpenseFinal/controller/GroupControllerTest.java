@@ -5,6 +5,7 @@ import com.example.splitExpenseFinal.document.Expense;
 import com.example.splitExpenseFinal.document.Group;
 import com.example.splitExpenseFinal.document.User;
 import com.example.splitExpenseFinal.dto.EqualSplitDto;
+import com.example.splitExpenseFinal.enums.ResponseStatusCode;
 import com.example.splitExpenseFinal.service.ExpenseService;
 import com.example.splitExpenseFinal.service.GroupService;
 import com.example.splitExpenseFinal.service.UserService;
@@ -89,8 +90,8 @@ public class GroupControllerTest {
 
         mockMvc.perform(mockRequest)
 //                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status",is("Accepted")))
-                .andExpect(jsonPath("$.code",is(202)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.GROUP_CREATED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.GROUP_CREATED.getHttpCode())))
                 .andExpect(jsonPath("$.value.name",is("sample")));
 
 
@@ -112,8 +113,8 @@ public class GroupControllerTest {
 
         mockMvc.perform(mockRequest)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EMPTY_GROUP_NAME.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EMPTY_GROUP_NAME.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("group not created")));
 
     }
@@ -127,9 +128,9 @@ public class GroupControllerTest {
                 .name("group1")
                 .build();
         User sampleUser = User.builder()
-            .id("1")
-            .name("user1")
-            .build();
+                .id("1")
+                .name("user1")
+                .build();
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post(ADD_USER_TO_GROUP_URL,sampleGroup.getId(),sampleUser.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
@@ -138,8 +139,8 @@ public class GroupControllerTest {
         Mockito.when(userService.findById(sampleUser.getId())).thenReturn(Optional.of(sampleUser));
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Found")))
-                .andExpect(jsonPath("$.code",is(404)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.INVALID_USER_ID_OR_GROUP_ID.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.INVALID_USER_ID_OR_GROUP_ID.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Invalid userId or groupId")));
 
 
@@ -163,8 +164,8 @@ public class GroupControllerTest {
         Mockito.when(userService.findById(sampleUser.getId())).thenReturn(Optional.ofNullable(null));
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Found")))
-                .andExpect(jsonPath("$.code",is(404)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.INVALID_USER_ID_OR_GROUP_ID.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.INVALID_USER_ID_OR_GROUP_ID.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Invalid userId or groupId")));
 
 
@@ -174,8 +175,8 @@ public class GroupControllerTest {
     @Test
     public void addUserToGroupUserAlreadyPresentTest() throws Exception{
         Map<String,Double> stringDoubleMap = new HashMap<String,Double>(){{
-                put("1", 10.0);
-            }};
+            put("1", 10.0);
+        }};
         Group sampleGroup = Group.builder()
                 .id("1")
                 .name("group1")
@@ -195,8 +196,8 @@ public class GroupControllerTest {
         Mockito.when(userService.findById(sampleUser.getId())).thenReturn(Optional.ofNullable(sampleUser));
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is( ResponseStatusCode.USER_ALREADY_PRESENT_IN_GROUP.getMessage())))
+                .andExpect(jsonPath("$.code",is( ResponseStatusCode.USER_ALREADY_PRESENT_IN_GROUP.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("User Already present")));
 
     }
@@ -225,8 +226,8 @@ public class GroupControllerTest {
         Mockito.when(userService.findById(sampleUser.getId())).thenReturn(Optional.ofNullable(sampleUser));
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("OK")))
-                .andExpect(jsonPath("$.code",is(200)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.USER_ADDED_IN_GROUP.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.USER_ADDED_IN_GROUP.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("User Added in group")));
 
     }
@@ -262,8 +263,8 @@ public class GroupControllerTest {
                 .content(equalSplitDtoString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("OK")))
-                .andExpect(jsonPath("$.code",is(200)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EQUAL_EXPENSE_CREATED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EQUAL_EXPENSE_CREATED.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Success")));
 
     }
@@ -291,8 +292,8 @@ public class GroupControllerTest {
                 .content(equalSplitDtoString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Bad Request")))
-                .andExpect(jsonPath("$.code",is(400)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.REQUEST_BODY_INCORRECT.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.REQUEST_BODY_INCORRECT.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("request body incorrect")));
 
 
@@ -323,8 +324,8 @@ public class GroupControllerTest {
                 .content(equalSplitDtoString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EQUAL_EXPENSE_VALIDATION_FAILED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EQUAL_EXPENSE_VALIDATION_FAILED.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Please Enter EQUAL split method")));
 
     }
@@ -355,8 +356,8 @@ public class GroupControllerTest {
                 .content(equalSplitDtoString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EQUAL_EXPENSE_VALIDATION_FAILED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EQUAL_EXPENSE_VALIDATION_FAILED.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Groupid or Payeeid is not valid")));
 
     }
@@ -386,8 +387,8 @@ public class GroupControllerTest {
                 .content(equalSplitDtoString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EQUAL_EXPENSE_VALIDATION_FAILED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EQUAL_EXPENSE_VALIDATION_FAILED.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Userlist is not valid or User is not present in Group")));
 
     }
@@ -407,7 +408,7 @@ public class GroupControllerTest {
                 .description("exact split")
                 .splitType("EXACT")
                 .amount(10.0)
-                .usersplitAmountMap(userMap)
+                .userSplitAmountMap(userMap)
                 .groupId("1")
                 .payeeId("2")
                 .build();
@@ -430,8 +431,8 @@ public class GroupControllerTest {
                 .content(expenseString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("OK")))
-                .andExpect(jsonPath("$.code",is(200)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EXACT_EXPENSE_CREATED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EXACT_EXPENSE_CREATED.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Success")));
 
     }
@@ -452,7 +453,7 @@ public class GroupControllerTest {
                 .description("exact split")
                 .splitType("Exact")
                 .amount(30.0)
-                .usersplitAmountMap(userMap)
+                .userSplitAmountMap(userMap)
                 .groupId("1")
                 .payeeId("2")
                 .build();
@@ -467,8 +468,8 @@ public class GroupControllerTest {
                 .content(expenseString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Bad Request")))
-                .andExpect(jsonPath("$.code",is(400)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.REQUEST_BODY_INCORRECT.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.REQUEST_BODY_INCORRECT.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("request body incorrect")));
 
 
@@ -487,7 +488,7 @@ public class GroupControllerTest {
                 .description("exact split")
                 .splitType("Exact")
                 .amount(10.0)
-                .usersplitAmountMap(userMap)
+                .userSplitAmountMap(userMap)
                 .groupId("1")
                 .payeeId("2")
                 .build();
@@ -503,8 +504,8 @@ public class GroupControllerTest {
                 .content(expenseString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("total amount not matching with split")));
 
     }
@@ -523,7 +524,7 @@ public class GroupControllerTest {
                 .description("exact split")
                 .splitType("Exact")
                 .amount(10.0)
-                .usersplitAmountMap(userMap)
+                .userSplitAmountMap(userMap)
                 .groupId("1")
                 .payeeId("2")
                 .build();
@@ -539,8 +540,8 @@ public class GroupControllerTest {
                 .content(expenseString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Usermap is not valid or User is not present in Group")));
 
     }
@@ -559,7 +560,7 @@ public class GroupControllerTest {
                 .description("exact split")
                 .splitType("Exact")
                 .amount(10.0)
-                .usersplitAmountMap(userMap)
+                .userSplitAmountMap(userMap)
                 .groupId("1")
                 .payeeId("2")
                 .build();
@@ -575,8 +576,8 @@ public class GroupControllerTest {
                 .content(expenseString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Groupid or Payeeid is not valid")));
 
     }
@@ -595,7 +596,7 @@ public class GroupControllerTest {
                 .description("exact split")
                 .splitType("Exacts")
                 .amount(10.0)
-                .usersplitAmountMap(userMap)
+                .userSplitAmountMap(userMap)
                 .groupId("1")
                 .payeeId("2")
                 .build();
@@ -611,8 +612,8 @@ public class GroupControllerTest {
                 .content(expenseString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Please Enter EXACT split method")));
 
     }
@@ -642,8 +643,8 @@ public class GroupControllerTest {
         Mockito.when(userService.findById(sampleUser.getId())).thenReturn(Optional.of(sampleUser));
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("OK")))
-                .andExpect(jsonPath("$.code",is(200)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.USER_REMOVED_FROM_GROUP_SUCCESSFULLY.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.USER_REMOVED_FROM_GROUP_SUCCESSFULLY.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("User Removed from the group")));
     }
 
@@ -672,8 +673,8 @@ public class GroupControllerTest {
         Mockito.when(userService.findById(sampleUser.getId())).thenReturn(Optional.of(sampleUser));
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.SETTLEMENT_REQUIRED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.SETTLEMENT_REQUIRED.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Error ! -> Settlement Required You owe to Group : rs-10.0")));
     }
 
@@ -702,8 +703,8 @@ public class GroupControllerTest {
         Mockito.when(userService.findById(sampleUser.getId())).thenReturn(Optional.of(sampleUser));
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.SETTLEMENT_REQUIRED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.SETTLEMENT_REQUIRED.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Error ! -> Settlement Required Group owes you : rs 10.0")));
     }
 
@@ -734,8 +735,8 @@ public class GroupControllerTest {
         Mockito.when(userService.findById(sampleUser.getId())).thenReturn(Optional.of(sampleUser));
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Found")))
-                .andExpect(jsonPath("$.code",is(404)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.USER_NOT_PRESENT_IN_GROUP.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.USER_NOT_PRESENT_IN_GROUP.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("User not present in the group")));
     }
 
@@ -766,8 +767,8 @@ public class GroupControllerTest {
         Mockito.when(userService.findById(sampleUser.getId())).thenReturn(Optional.of(sampleUser));
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Found")))
-                .andExpect(jsonPath("$.code",is(404)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.INVALID_USER_ID_OR_GROUP_ID.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.INVALID_USER_ID_OR_GROUP_ID.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Check User id or Group id")));
     }
 
@@ -786,7 +787,7 @@ public class GroupControllerTest {
                 .description("exact split")
                 .splitType("EXACT")
                 .amount(10.0)
-                .usersplitAmountMap(userMap)
+                .userSplitAmountMap(userMap)
                 .groupId("1")
                 .payeeId("2")
                 .build();
@@ -811,8 +812,8 @@ public class GroupControllerTest {
 
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("OK")))
-                .andExpect(jsonPath("$.code",is(200)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EXACT_EXPENSE_EDITED_SUCCESSFULLY.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EXACT_EXPENSE_EDITED_SUCCESSFULLY.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Success")));
 
     }
@@ -832,7 +833,7 @@ public class GroupControllerTest {
                 .description("exact split")
                 .splitType("EXACT")
                 .amount(10.0)
-                .usersplitAmountMap(userMap)
+                .userSplitAmountMap(userMap)
                 .groupId("1")
                 .payeeId("2")
                 .build();
@@ -857,8 +858,8 @@ public class GroupControllerTest {
 
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("total amount not matching with split")));
 
     }
@@ -878,7 +879,7 @@ public class GroupControllerTest {
                 .description("exact split")
                 .splitType("EXACT")
                 .amount(10.0)
-                .usersplitAmountMap(userMap)
+                .userSplitAmountMap(userMap)
                 .groupId("1")
                 .payeeId("2")
                 .build();
@@ -898,8 +899,8 @@ public class GroupControllerTest {
 
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Found")))
-                .andExpect(jsonPath("$.code",is(404)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.INVALID_EXPENSE_ID.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.INVALID_EXPENSE_ID.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Invalid Expense Id")));
 
     }
@@ -919,7 +920,7 @@ public class GroupControllerTest {
                 .description("exact split")
                 .splitType("EXACT")
                 .amount(10.0)
-                .usersplitAmountMap(userMap)
+                .userSplitAmountMap(userMap)
                 .groupId("1")
                 .payeeId("2")
                 .build();
@@ -938,8 +939,8 @@ public class GroupControllerTest {
 
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Bad Request")))
-                .andExpect(jsonPath("$.code",is(400)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.REQUEST_BODY_INCORRECT.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.REQUEST_BODY_INCORRECT.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("request body incorrect")));
 
     }
@@ -963,7 +964,7 @@ public class GroupControllerTest {
                 .description("equal split")
                 .splitType("EQUAL")
                 .amount(10.0)
-                .usersplitAmountMap(userMap)
+                .userSplitAmountMap(userMap)
                 .groupId("1")
                 .payeeId("2")
                 .build();
@@ -996,11 +997,12 @@ public class GroupControllerTest {
                 .content(expenseString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("OK")))
-                .andExpect(jsonPath("$.code",is(200)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EQUAL_EXPENSE_EDITED_SUCCESSFULLY.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EQUAL_EXPENSE_EDITED_SUCCESSFULLY.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Success")));
 
     }
+
 
 
     @Test
@@ -1021,7 +1023,7 @@ public class GroupControllerTest {
                 .description("equal split")
                 .splitType("EQUAL")
                 .amount(10.0)
-                .usersplitAmountMap(userMap)
+                .userSplitAmountMap(userMap)
                 .groupId("1")
                 .payeeId("2")
                 .build();
@@ -1049,8 +1051,8 @@ public class GroupControllerTest {
                 .content(expenseString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Acceptable")))
-                .andExpect(jsonPath("$.code",is(406)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EQUAL_EXPENSE_VALIDATION_FAILED.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EQUAL_EXPENSE_VALIDATION_FAILED.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Please Enter EQUAL split method")));
 
     }
@@ -1086,8 +1088,8 @@ public class GroupControllerTest {
                 .content(expenseString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Found")))
-                .andExpect(jsonPath("$.code",is(404)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.INVALID_EXPENSE_ID.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.INVALID_EXPENSE_ID.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Invalid Expense Id")));
 
     }
@@ -1122,14 +1124,14 @@ public class GroupControllerTest {
                 .content(expenseString);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Bad Request")))
-                .andExpect(jsonPath("$.code",is(400)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.REQUEST_BODY_INCORRECT.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.REQUEST_BODY_INCORRECT.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("request body incorrect")));
 
     }
 
     @Test
-    public void removeExpenseSuccessTest() throws Exception{
+    public void removeExpenseFailureTest() throws Exception{
 
 
         Mockito.when(expenseService.findById("1")).thenReturn(Optional.ofNullable(null));
@@ -1140,15 +1142,15 @@ public class GroupControllerTest {
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("Not Found")))
-                .andExpect(jsonPath("$.code",is(404)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.INVALID_EXPENSE_ID.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.INVALID_EXPENSE_ID.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("Invalid Expense Id")));
 
 
     }
 
     @Test
-    public void removeExpenseFailureTest() throws Exception{
+    public void removeExpenseSuccessTest() throws Exception{
         Map<String,Double> userMap = new HashMap<String,Double>(){{
             put("1",8.00);
             put("2",2.00);
@@ -1160,7 +1162,7 @@ public class GroupControllerTest {
                 .description("equal split")
                 .splitType("EQUAL")
                 .amount(10.0)
-                .usersplitAmountMap(userMap)
+                .userSplitAmountMap(userMap)
                 .groupId("1")
                 .payeeId("2")
                 .build();
@@ -1179,8 +1181,8 @@ public class GroupControllerTest {
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(mockRequest)
-                .andExpect(jsonPath("$.status",is("OK")))
-                .andExpect(jsonPath("$.code",is(200)))
+                .andExpect(jsonPath("$.status",is(ResponseStatusCode.EXPENSE_REMOVED_SUCCESSFULLY.getMessage())))
+                .andExpect(jsonPath("$.code",is(ResponseStatusCode.EXPENSE_REMOVED_SUCCESSFULLY.getHttpCode())))
                 .andExpect(jsonPath("$.value",is("OK")));
 
 

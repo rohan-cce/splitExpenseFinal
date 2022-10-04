@@ -3,7 +3,8 @@ package com.example.splitExpenseFinal.controller;
 import com.example.splitExpenseFinal.document.Expense;
 import com.example.splitExpenseFinal.document.Group;
 import com.example.splitExpenseFinal.dto.EqualSplitDto;
-import com.example.splitExpenseFinal.returnTemplate.ResponseTemplate;
+import com.example.splitExpenseFinal.enums.ResponseStatusCode;
+import com.example.splitExpenseFinal.responseTemplate.ResponseTemplate;
 import com.example.splitExpenseFinal.service.ExpenseService;
 import com.example.splitExpenseFinal.service.GroupService;
 import com.example.splitExpenseFinal.service.UserService;
@@ -36,14 +37,14 @@ public class GroupController {
 
             if (group1 != null) {
                 return new ResponseTemplate(
-                        HttpStatus.ACCEPTED.getReasonPhrase(),
-                        HttpStatus.ACCEPTED.value(),
+                        ResponseStatusCode.GROUP_CREATED.getMessage(),
+                        ResponseStatusCode.GROUP_CREATED.getHttpCode(),
                         group1);
             }
         }
         return new ResponseTemplate(
-                HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
-                HttpStatus.NOT_ACCEPTABLE.value(),
+                ResponseStatusCode.EMPTY_GROUP_NAME.getMessage(),
+                ResponseStatusCode.EMPTY_GROUP_NAME.getHttpCode(),
                 "group not created");
     }
 
@@ -59,19 +60,19 @@ public class GroupController {
                 userMap.put(userId, 0.0);
                 groupService.save(group);
                 return new ResponseTemplate(
-                        HttpStatus.OK.getReasonPhrase(),
-                        HttpStatus.OK.value(),
+                        ResponseStatusCode.USER_ADDED_IN_GROUP.getMessage(),
+                        ResponseStatusCode.USER_ADDED_IN_GROUP.getHttpCode(),
                         "User Added in group");
             }
             return new ResponseTemplate(
-                    HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
-                    HttpStatus.NOT_ACCEPTABLE.value(),
+                    ResponseStatusCode.USER_ALREADY_PRESENT_IN_GROUP.getMessage(),
+                    ResponseStatusCode.USER_ALREADY_PRESENT_IN_GROUP.getHttpCode(),
                     "User Already present");
 
         }
         return new ResponseTemplate(
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
-                HttpStatus.NOT_FOUND.value(),
+                ResponseStatusCode.INVALID_USER_ID_OR_GROUP_ID.getMessage(),
+                ResponseStatusCode.INVALID_USER_ID_OR_GROUP_ID.getHttpCode(),
                 "Invalid userId or groupId");
     }
 
@@ -82,18 +83,18 @@ public class GroupController {
             if (validationResult.equalsIgnoreCase("Success")) {
                 expenseService.createEqualExpense(equalSplitDto, null);
                 return new ResponseTemplate(
-                        HttpStatus.OK.getReasonPhrase(),
-                        HttpStatus.OK.value(),
+                        ResponseStatusCode.EQUAL_EXPENSE_CREATED.getMessage(),
+                        ResponseStatusCode.EQUAL_EXPENSE_CREATED.getHttpCode(),
                         validationResult);
             }
             return new ResponseTemplate(
-                    HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
-                    HttpStatus.NOT_ACCEPTABLE.value(),
+                    ResponseStatusCode.EQUAL_EXPENSE_VALIDATION_FAILED.getMessage(),
+                    ResponseStatusCode.EQUAL_EXPENSE_VALIDATION_FAILED.getHttpCode(),
                     validationResult);
         }
         return new ResponseTemplate(
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                HttpStatus.BAD_REQUEST.value(),
+                ResponseStatusCode.REQUEST_BODY_INCORRECT.getMessage(),
+                ResponseStatusCode.REQUEST_BODY_INCORRECT.getHttpCode(),
                 "request body incorrect");
     }
 
@@ -105,23 +106,23 @@ public class GroupController {
                 if (validationResult.equalsIgnoreCase("Success")) {
                     expenseService.editOrRemoveEqualExpense(id, equalSplitDto); //:TODO
                     return new ResponseTemplate(
-                            HttpStatus.OK.getReasonPhrase(),
-                            HttpStatus.OK.value(),
+                            ResponseStatusCode.EQUAL_EXPENSE_EDITED_SUCCESSFULLY.getMessage(),
+                            ResponseStatusCode.EQUAL_EXPENSE_EDITED_SUCCESSFULLY.getHttpCode(),
                             validationResult);
                 }
                 return new ResponseTemplate(
-                        HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
-                        HttpStatus.NOT_ACCEPTABLE.value(),
+                        ResponseStatusCode.EQUAL_EXPENSE_VALIDATION_FAILED.getMessage(),
+                        ResponseStatusCode.EQUAL_EXPENSE_VALIDATION_FAILED.getHttpCode(),
                         validationResult);
             }
             return new ResponseTemplate(
-                    HttpStatus.NOT_FOUND.getReasonPhrase(),
-                    HttpStatus.NOT_FOUND.value(),
+                    ResponseStatusCode.INVALID_EXPENSE_ID.getMessage(),
+                    ResponseStatusCode.INVALID_EXPENSE_ID.getHttpCode(),
                     "Invalid Expense Id");
         }
         return new ResponseTemplate(
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                HttpStatus.BAD_REQUEST.value(),
+                ResponseStatusCode.REQUEST_BODY_INCORRECT.getMessage(),
+                ResponseStatusCode.REQUEST_BODY_INCORRECT.getHttpCode(),
                 "request body incorrect");
     }
 
@@ -132,18 +133,18 @@ public class GroupController {
             if (validationResult.equalsIgnoreCase("Success")) {
                 expenseService.createExactExpense(expense, null);
                 return new ResponseTemplate(
-                        HttpStatus.OK.getReasonPhrase(),
-                        HttpStatus.OK.value(),
+                        ResponseStatusCode.EXACT_EXPENSE_CREATED.getMessage(),
+                        ResponseStatusCode.EXACT_EXPENSE_CREATED.getHttpCode(),
                         validationResult);
             }
             return new ResponseTemplate(
-                    HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
-                    HttpStatus.NOT_ACCEPTABLE.value(),
+                    ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getMessage(),
+                    ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getHttpCode(),
                     validationResult);
         }
         return new ResponseTemplate(
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                HttpStatus.BAD_REQUEST.value(),
+                ResponseStatusCode.REQUEST_BODY_INCORRECT.getMessage(),
+                ResponseStatusCode.REQUEST_BODY_INCORRECT.getHttpCode(),
                 "request body incorrect");
     }
 
@@ -155,28 +156,28 @@ public class GroupController {
                 if (validationResult.equalsIgnoreCase("Success")) {
                     expenseService.editOrRemoveExactExpense(id, expense); //:TODO
                     return new ResponseTemplate(
-                            HttpStatus.OK.getReasonPhrase(),
-                            HttpStatus.OK.value(),
+                            ResponseStatusCode.EXACT_EXPENSE_EDITED_SUCCESSFULLY.getMessage(),
+                            ResponseStatusCode.EXACT_EXPENSE_EDITED_SUCCESSFULLY.getHttpCode(),
                             validationResult);
                 }
                 return new ResponseTemplate(
-                        HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
-                        HttpStatus.NOT_ACCEPTABLE.value(),
+                        ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getMessage(),
+                        ResponseStatusCode.EXACT_EXPENSE_VALIDATION_FAILED.getHttpCode(),
                         validationResult);
             }
             return new ResponseTemplate(
-                    HttpStatus.NOT_FOUND.getReasonPhrase(),
-                    HttpStatus.NOT_FOUND.value(),
+                    ResponseStatusCode.INVALID_EXPENSE_ID.getMessage(),
+                    ResponseStatusCode.INVALID_EXPENSE_ID.getHttpCode(),
                     "Invalid Expense Id");
         }
         return new ResponseTemplate(
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                HttpStatus.BAD_REQUEST.value(),
+                ResponseStatusCode.REQUEST_BODY_INCORRECT.getMessage(),
+                ResponseStatusCode.REQUEST_BODY_INCORRECT.getHttpCode(),
                 "request body incorrect");
     }
 
     @DeleteMapping("/remove/user/{groupId}/{userId}")
-    public ResponseTemplate removeUserToGroup(@PathVariable("groupId") String groupId, @PathVariable("userId") String userId) {
+    public ResponseTemplate removeUserFromGroup(@PathVariable("groupId") String groupId, @PathVariable("userId") String userId) {
         if (groupService.findByGroupId(groupId).isPresent() && userService.findById(userId).isPresent()) {
             Group group = groupService.findByGroupId(groupId).get();
             group.setId(group.getId());
@@ -188,35 +189,35 @@ public class GroupController {
                     userMap.remove(userId);
                     groupService.save(group);
                     return new ResponseTemplate(
-                            HttpStatus.OK.getReasonPhrase(),
-                            HttpStatus.OK.value(),
+                            ResponseStatusCode.USER_REMOVED_FROM_GROUP_SUCCESSFULLY.getMessage(),
+                            ResponseStatusCode.USER_REMOVED_FROM_GROUP_SUCCESSFULLY.getHttpCode(),
                             "User Removed from the group");
                 } else {
                     if (pendingAmount > 0) {
                         return new ResponseTemplate(
-                                HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
-                                HttpStatus.NOT_ACCEPTABLE.value(),
+                                ResponseStatusCode.SETTLEMENT_REQUIRED.getMessage(),
+                                ResponseStatusCode.SETTLEMENT_REQUIRED.getHttpCode(),
                                 new String("Error ! -> Settlement Required " +
                                         "Group owes you : rs " + pendingAmount));
                     }
                     return new ResponseTemplate(
-                            HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
-                            HttpStatus.NOT_ACCEPTABLE.value(),
+                            ResponseStatusCode.SETTLEMENT_REQUIRED.getMessage(),
+                            ResponseStatusCode.SETTLEMENT_REQUIRED.getHttpCode(),
                             new String("Error ! -> Settlement Required " +
                                     "You owe to Group : rs" + pendingAmount));
                 }
             }
 
             return new ResponseTemplate(
-                    HttpStatus.NOT_FOUND.getReasonPhrase(),
-                    HttpStatus.NOT_FOUND.value(),
+                    ResponseStatusCode.USER_NOT_PRESENT_IN_GROUP.getMessage(),
+                    ResponseStatusCode.USER_NOT_PRESENT_IN_GROUP.getHttpCode(),
                     "User not present in the group");
 
         }
 
         return new ResponseTemplate(
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
-                HttpStatus.NOT_FOUND.value(),
+                ResponseStatusCode.INVALID_USER_ID_OR_GROUP_ID.getMessage(),
+                ResponseStatusCode.INVALID_USER_ID_OR_GROUP_ID.getHttpCode(),
                 "Check User id or Group id");
     }
 
@@ -225,13 +226,13 @@ public class GroupController {
         if (expenseService.findById(id).isPresent()) {
             expenseService.editOrRemoveExactExpense(id, null);
             return new ResponseTemplate(
-                    HttpStatus.OK.getReasonPhrase(),
-                    HttpStatus.OK.value(),
+                    ResponseStatusCode.EXPENSE_REMOVED_SUCCESSFULLY.getMessage(),
+                    ResponseStatusCode.EXPENSE_REMOVED_SUCCESSFULLY.getHttpCode(),
                     "OK");
         }
         return new ResponseTemplate(
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
-                HttpStatus.NOT_FOUND.value(),
+               ResponseStatusCode.INVALID_EXPENSE_ID.getMessage(),
+                ResponseStatusCode.INVALID_EXPENSE_ID.getHttpCode(),
                 "Invalid Expense Id");
     }
 }

@@ -70,7 +70,7 @@ public class ExpenseServiceImpl implements ExpenseService {
             expense.setAmount(equalSplitDto.getAmount());
         }
 
-        Map<String, Double> usersplitAmountMap = expense.getUsersplitAmountMap();
+        Map<String, Double> usersplitAmountMap = expense.getUserSplitAmountMap();
         List<String> userList = equalSplitDto.getListOfUsers();
 
         group = groupService.findByGroupId(equalSplitDto.getGroupId()).get();
@@ -104,8 +104,8 @@ public class ExpenseServiceImpl implements ExpenseService {
     public String exactExpenseValidation(Expense expense) {
         if (expense.getSplitType().equalsIgnoreCase("EXACT")) {
             if (groupService.findByGroupId(expense.getGroupId()).isPresent() && groupService.checkWhetherUserExists(expense.getPayeeId())) {
-                if (groupService.checkUserList(new ArrayList(expense.getUsersplitAmountMap().keySet()), expense.getGroupId())) {
-                    if (checkAmount(new ArrayList<Double>(expense.getUsersplitAmountMap().values()), expense.getAmount())) {
+                if (groupService.checkUserList(new ArrayList(expense.getUserSplitAmountMap().keySet()), expense.getGroupId())) {
+                    if (checkAmount(new ArrayList<Double>(expense.getUserSplitAmountMap().values()), expense.getAmount())) {
                         return "Success";
                     }
                     return "total amount not matching with split";
@@ -127,7 +127,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         expense = expenseRepository.findById(id).get();
         expense.setId(id);
 
-        Map<String, Double> usersplitAmountMap = expense.getUsersplitAmountMap();
+        Map<String, Double> usersplitAmountMap = expense.getUserSplitAmountMap();
         List<String> userList = equalSplitDto.getListOfUsers();
 
         group = groupService.findByGroupId(expense.getGroupId()).get();
@@ -165,7 +165,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     public void editOrRemoveExactExpense(String id, @Nullable Expense editExpense) {
 
         expense = expenseRepository.findById(id).get();
-        Map<String, Double> usersplitAmountMap = expense.getUsersplitAmountMap();
+        Map<String, Double> usersplitAmountMap = expense.getUserSplitAmountMap();
         group = groupService.findByGroupId(expense.getGroupId()).get();
         Map<String, Double> groupMap = group.getCurrentBalance();
         User payeeuser = userService.findById(expense.getPayeeId()).get();
@@ -205,7 +205,7 @@ public class ExpenseServiceImpl implements ExpenseService {
             expense.setId(id);
         }
 
-        Map<String, Double> usersplitAmountMap = expense.getUsersplitAmountMap();
+        Map<String, Double> usersplitAmountMap = expense.getUserSplitAmountMap();
         group = groupService.findByGroupId(expense.getGroupId()).get();
         Map<String, Double> groupMap = group.getCurrentBalance();
         User payeeuser = userService.findById(expense.getPayeeId()).get();
@@ -237,7 +237,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         if (expense.getDescription() != null &&
                 expense.getSplitType() != null &&
                 expense.getAmount() != null &&
-                expense.getUsersplitAmountMap() != null &&
+                expense.getUserSplitAmountMap() != null &&
                 expense.getGroupId() != null &&
                 expense.getPayeeId() != null
                 ) {
